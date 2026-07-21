@@ -74,6 +74,49 @@ def analyse_types_donnees(breaches, top_n=15):
         print(f"{type_donnee} : {nombre} breaches")
 
 
+def top_domaines_a_classer(breaches, top_n=20):
+    """Affiche les domaines des plus gros breaches, pour savoir lesquels classer en premier."""
+    tries = sorted(breaches, key=lambda b: b["PwnCount"], reverse=True)
+
+    print(f"\n--- Top {top_n} domaines à classer par secteur (par PwnCount) ---")
+    for b in tries[:top_n]:
+        print(f"{b['Domain']:30} | {b['PwnCount']:>15,} comptes | {b['Name']}")
+
+
+SECTEURS = {
+    "facebook.com": "Réseaux sociaux",
+    "myspace.com": "Réseaux sociaux",
+    "twitter.com": "Réseaux sociaux",
+    "verifications.io": "Marketing / Données email",
+    "rivercitymediaonline.com": "Marketing / Données email",
+    "deezer.com": "Divertissement / Streaming",
+    "wattpad.com": "Divertissement / Média",
+    "zynga.com": "Jeux vidéo",
+    "163.com": "Services email / Technologie",
+    "cit0day.in": "Marché noir de données",
+}
+
+
+def classer_secteur(domain):
+    """Retourne le secteur d'un domaine, ou 'Compilation / Non attribuable' si pas de domaine,
+    ou 'Non classé' si le domaine existe mais n'est pas encore dans notre dictionnaire."""
+    if not domain:
+        return "Compilation / Non attribuable"
+    return SECTEURS.get(domain, "Non classé")
+
+
+def analyse_par_secteur(breaches):
+    """Compte le volume de comptes compromis (PwnCount) par secteur."""
+    compteur = Counter()
+    for b in breaches:
+        secteur = classer_secteur(b["Domain"])
+        compteur[secteur] += b["PwnCount"]
+
+    print("\n--- Volume de comptes compromis par secteur ---")
+    for secteur, total in compteur.most_common():
+        print(f"{secteur:35} : {total:,} comptes")
+
+
 if __name__ == "__main__":
     breaches = telecharger_breaches()
     sauvegarder(breaches)
@@ -84,3 +127,5 @@ if __name__ == "__main__":
     analyse_plus_gros_breach(breaches)
     analyse_par_annee(breaches)
     analyse_types_donnees(breaches)
+    top_domaines_a_classer(breaches)
+    analyse_par_secteur(breaches) 
