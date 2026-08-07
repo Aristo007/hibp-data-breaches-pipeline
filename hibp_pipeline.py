@@ -10,9 +10,43 @@ Ce script :
 
 import requests
 import json
+import csv
 from collections import Counter
 
 BREACHES_FILE = "breaches.json"
+
+
+def exporter_csv_breaches(breaches, filename="export_breaches.csv"):
+    """Exporte une ligne par breach : infos générales + année + secteur, pour Power BI."""
+    with open(filename, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow([
+            "Name", "Domain", "Secteur", "BreachDate", "Year",
+            "PwnCount", "IsVerified", "IsSensitive"
+        ])
+        for b in breaches:
+            writer.writerow([
+                b["Name"],
+                b["Domain"],
+                classer_secteur(b["Domain"]),
+                b["BreachDate"],
+                b["BreachDate"][:4],  # l'année, extraite de la date
+                b["PwnCount"],
+                b["IsVerified"],
+                b["IsSensitive"],
+            ])
+    print(f"[OK] Export CSV créé : {filename}")
+
+
+def exporter_csv_dataclasses(breaches, filename="export_dataclasses.csv"):
+    """Exporte une ligne par (breach, type de donnée volée), pour filtrer par type dans Power BI."""
+    with open(filename, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Name", "DataClass"])
+        for b in breaches:
+            for data_class in b["DataClasses"]:
+                writer.writerow([b["Name"], data_class])
+    print(f"[OK] Export CSV créé : {filename}")
 
 
 def telecharger_breaches():
@@ -129,3 +163,5 @@ if __name__ == "__main__":
     analyse_types_donnees(breaches)
     top_domaines_a_classer(breaches)
     analyse_par_secteur(breaches) 
+    exporter_csv_breaches(breaches)
+    exporter_csv_dataclasses(breaches)

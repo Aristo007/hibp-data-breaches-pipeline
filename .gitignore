@@ -1,3 +1,11 @@
 breaches.json
 __pycache__/
 *.pyc
+.env
+dags/data/
+dags/__pycache__/
+logs/
+plugins/
+*.csv
+!export_*.csv
+hibp-projet-groupe10_accessKeys.csv
