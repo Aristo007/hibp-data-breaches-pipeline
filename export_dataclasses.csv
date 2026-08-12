@@ -233,6 +233,10 @@ Ajarn,Phone numbers
 Ajarn,Profile photos
 AKP,Email addresses
 AKP,Email messages
+Alcon,Email addresses
+Alcon,Names
+Alcon,Phone numbers
+Alcon,Physical addresses
 AlienStealerLogs,Email addresses
 AlienStealerLogs,Passwords
 AllianzLife,Dates of birth
@@ -803,6 +807,13 @@ BreachForumsClone,Usernames
 BreachForumsV5,Email addresses
 BreachForumsV5,Passwords
 BreachForumsV5,Usernames
+BrinksHome,Dates of birth
+BrinksHome,Email addresses
+BrinksHome,Names
+BrinksHome,Partial credit card data
+BrinksHome,Phone numbers
+BrinksHome,Physical addresses
+BrinksHome,Purchases
 BTCAlpha,Email addresses
 BTCAlpha,IP addresses
 BTCAlpha,Passwords
@@ -1601,6 +1612,13 @@ Evony,Email addresses
 Evony,IP addresses
 Evony,Passwords
 Evony,Usernames
+ExactSciences,Dates of birth
+ExactSciences,Email addresses
+ExactSciences,Genders
+ExactSciences,Names
+ExactSciences,Personal health data
+ExactSciences,Phone numbers
+ExactSciences,Physical addresses
 Exactis,Credit status information
 Exactis,Dates of birth
 Exactis,Education levels
@@ -2263,6 +2281,14 @@ HoundDawgs,Email addresses
 HoundDawgs,IP addresses
 HoundDawgs,Passwords
 HoundDawgs,Website activity
+HoustonCityCollege,Academic records
+HoustonCityCollege,Citizenship statuses
+HoustonCityCollege,Dates of birth
+HoustonCityCollege,Email addresses
+HoustonCityCollege,Genders
+HoustonCityCollege,Names
+HoustonCityCollege,Phone numbers
+HoustonCityCollege,Physical addresses
 Houzz,Email addresses
 Houzz,Geographic locations
 Houzz,IP addresses
@@ -2391,6 +2417,12 @@ InstitutoNacionalDeDeportesDeChile,Passwords
 InstitutoNacionalDeDeportesDeChile,Usernames
 Intelimost,Email addresses
 Intelimost,Passwords
+InterConSecurity,Email addresses
+InterConSecurity,Employers
+InterConSecurity,Job titles
+InterConSecurity,Names
+InterConSecurity,Phone numbers
+InterConSecurity,Physical addresses
 IKO,Email addresses
 IKO,Geographic locations
 IKO,Names
@@ -4190,6 +4222,11 @@ Spirol,Job titles
 Spirol,Names
 Spirol,Phone numbers
 Spirol,Physical addresses
+SplitVPN,Device information
+SplitVPN,Email addresses
+SplitVPN,Geographic locations
+SplitVPN,IP addresses
+SplitVPN,Partial credit card data
 Sport2000,Dates of birth
 Sport2000,Email addresses
 Sport2000,Names

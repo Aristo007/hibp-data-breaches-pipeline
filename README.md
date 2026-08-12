@@ -27,7 +27,7 @@ Le DAG Airflow exécute trois tâches séquentielles :
 2. **Transformation** — génération de deux fichiers CSV (breaches, types de données volées) prêts pour Power BI
 3. **Chargement** — envoi des fichiers CSV vers un bucket S3, organisés par date d'ingestion (`breaches/{date}/`)
 
-Le pipeline inclut une gestion d'erreurs (retries automatiques, timeout, messages d'erreur explicites) et bascule automatiquement en mode simulation si les identifiants AWS ne sont pas configurés, ce qui permet de tester le DAG sans dépendance bloquante à S3.
+Le pipeline inclut une gestion d'erreurs (retries automatiques, timeout, messages d'erreur explicites) et bascule automatiquement en mode simulation si les identifiants AWS ne sont pas configurés.
 
 ## Stack technique
 
@@ -43,11 +43,22 @@ Le pipeline inclut une gestion d'erreurs (retries automatiques, timeout, message
 
 ```
 .
+├── src/
+│   └── hibp_pipeline.py       # Script d'ingestion et d'analyse en local (hors Airflow)
 ├── dags/
-│   └── hibp_dag.py          # DAG Airflow (3 tâches)
-├── hibp_pipeline.py          # Script d'ingestion et d'analyse en local (hors Airflow)
-├── docker-compose.yaml       # Configuration Airflow (officielle Apache)
-├── .env.example               # Modèle de variables d'environnement (AWS, etc.)
+│   └── hibp_dag.py            # DAG Airflow (3 tâches)
+├── config/
+│   ├── docker-compose.yaml    # Configuration Airflow (officielle Apache)
+│   └── .env.example           # Modèle de variables d'environnement (AWS, etc.)
+├── powerbi/
+│   └── Groupe10.pbix          # Dashboard Power BI
+├── reports/
+│   ├── rapport_groupe10.docx      # Rapport de projet détaillé
+│   └── soutenance_groupe10.pptx   # Support de présentation
+├── export_breaches.csv        # Export de données pour Power BI
+├── export_dataclasses.csv     # Export de données pour Power BI
+├── architecture_pipeline_hibp.png
+├── requirements.txt
 ├── .gitignore
 └── README.md
 ```
@@ -68,9 +79,15 @@ git clone https://github.com/Aristo007/hibp-data-breaches-pipeline.git
 cd hibp-data-breaches-pipeline
 ```
 
-### 2. Configurer les variables d'environnement
+### 2. Installer les dépendances Python
 
-Crée un fichier `.env` à la racine (non versionné, voir `.env.example`) :
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Configurer les variables d'environnement
+
+Copie `config/.env.example` vers un fichier `.env` à la racine du projet (non versionné) et renseigne tes propres identifiants :
 
 ```
 AIRFLOW_UID=50000
@@ -83,33 +100,39 @@ AWS_REGION=eu-north-1
 
 > Si ces variables AWS ne sont pas définies, la tâche de chargement bascule automatiquement en mode simulation (aucune erreur, juste un message dans les logs).
 
-### 3. Lancer Airflow
+### 4. Lancer Airflow
+
+Le fichier `docker-compose.yaml` se trouve dans `config/` — lance les commandes depuis la racine du projet en le référençant :
 
 ```bash
-docker compose up airflow-init
-docker compose up -d
+docker compose -f config/docker-compose.yaml up airflow-init
+docker compose -f config/docker-compose.yaml up -d
 ```
 
 L'interface est accessible sur [http://localhost:8080](http://localhost:8080) (identifiants par défaut : `airflow` / `airflow`).
 
-### 4. Activer et déclencher le DAG
+### 5. Activer et déclencher le DAG
 
 Dans l'interface Airflow, active le DAG `hibp_pipeline`, puis déclenche une exécution manuelle. Les 3 tâches (ingestion, transformation, chargement) s'exécutent séquentiellement.
 
-### 5. Exécution locale (sans Airflow, optionnel)
+### 6. Exécution locale (sans Airflow, optionnel)
 
 Pour tester rapidement en dehors d'Airflow :
 
 ```bash
-pip install requests
-python hibp_pipeline.py
+python src/hibp_pipeline.py
 ```
 
 Génère `breaches.json`, `export_breaches.csv` et `export_dataclasses.csv` en local.
 
-### 6. Dashboard Power BI
+### 7. Dashboard Power BI
 
-Ouvrir Power BI Desktop, importer `export_breaches.csv` et `export_dataclasses.csv` (ou les récupérer depuis le bucket S3), puis relier les deux tables sur le champ `Name`.
+Ouvrir `powerbi/Groupe10.pbix` dans Power BI Desktop. Les données peuvent être actualisées depuis les CSV locaux ou directement depuis le bucket S3.
+
+## Rapports et documentation
+
+- Le rapport de projet détaillé se trouve dans `reports/rapport_groupe10.docx`
+- Le support de présentation se trouve dans `reports/soutenance_groupe10.pptx`
 
 ## Analyses réalisées
 
@@ -120,7 +143,7 @@ Ouvrir Power BI Desktop, importer `export_breaches.csv` et `export_dataclasses.c
 
 ## Limites connues
 
-- L'API HIBP ne fournit pas de champ "secteur d'activité" — la classification est construite manuellement, en priorisant les breaches à plus fort volume. Une part significative des données reste "non classée" ou relève de compilations sans site source identifiable (stealer logs, combolists).
+- L'API HIBP ne fournit pas de champ "secteur d'activité" — la classification est construite manuellement, en priorisant les breaches à fort volume. Une part significative des données reste "non classée" ou relève de compilations sans site source identifiable (stealer logs, combolists).
 - Les données 2026 ne couvrent qu'une partie de l'année en cours au moment de l'analyse.
 
 ## Auteur
